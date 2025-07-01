@@ -8,7 +8,6 @@ import BorrowedItemsView from '../components/BorrowedItemsView';
 import ProfileView from '../components/ProfileView';
 import ReviewView from '../components/ReviewView';
 import MessageModal from '../components/MessageModal';
-import TipsModal from '../components/TipsModal';
 import RentalRequestView from '../components/RentalRequestView';
 import { rentalItems, jjangguBorrowedItems, mockChatList } from '../data/mockData';
 import type { RentalItem, BorrowedItem, ChatItem, Review } from '../types';
@@ -19,7 +18,6 @@ const Index = () => {
   const [selectedChatPartner, setSelectedChatPartner] = useState<string>('');
   const [borrowedItems, setBorrowedItems] = useState<BorrowedItem[]>(jjangguBorrowedItems);
   const [messageModal, setMessageModal] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
-  const [tipsModal, setTipsModal] = useState<{ show: boolean; content: string; loading: boolean }>({ show: false, content: '', loading: false });
   const [items, setItems] = useState<RentalItem[]>(rentalItems);
   const [searchResults, setSearchResults] = useState<RentalItem[]>(rentalItems);
   const [reviewData, setReviewData] = useState<{ itemId: string; itemName: string } | null>(null);
@@ -100,17 +98,6 @@ const Index = () => {
     setMessageModal({ show: true, message });
   };
 
-  // 사용 팁 생성
-  const generateTips = async (itemName: string) => {
-    setTipsModal({ show: true, content: '', loading: true });
-    
-    // 실제 API 호출 대신 가상 데이터로 시뮬레이션
-    setTimeout(() => {
-      const tips = `${itemName} 사용 팁:\n\n1. 사용 전 물품 상태를 꼼꼼히 확인하세요\n2. 설명서가 있다면 반드시 읽어보세요\n3. 사용 후에는 깨끗하게 정리해주세요\n4. 문제가 생기면 즉시 대여자에게 연락하세요\n5. 반납 시간을 꼭 지켜주세요`;
-      setTipsModal({ show: true, content: tips, loading: false });
-    }, 2000);
-  };
-
   // 리뷰 작성
   const handleReviewSubmit = (review: Review) => {
     setItems(prevItems =>
@@ -165,7 +152,6 @@ const Index = () => {
             onRentRequest={handleRentRequest}
             onRentRequestWithTime={handleRentRequestWithTime}
             onReturn={handleReturn}
-            onGenerateTips={generateTips}
             onWriteReview={(itemId, itemName) => {
               setReviewData({ itemId, itemName });
               setCurrentView('review');
@@ -253,15 +239,6 @@ const Index = () => {
         <MessageModal
           message={messageModal.message}
           onClose={() => setMessageModal({ show: false, message: '' })}
-        />
-      )}
-
-      {/* 사용 팁 모달 */}
-      {tipsModal.show && (
-        <TipsModal
-          content={tipsModal.content}
-          loading={tipsModal.loading}
-          onClose={() => setTipsModal({ show: false, content: '', loading: false })}
         />
       )}
     </div>

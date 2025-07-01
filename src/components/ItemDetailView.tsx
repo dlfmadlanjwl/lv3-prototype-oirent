@@ -7,7 +7,6 @@ interface ItemDetailViewProps {
   onRentRequest: (itemId: string) => void;
   onRentRequestWithTime?: (item: RentalItem) => void;
   onReturn: (itemId: string) => void;
-  onGenerateTips: (itemName: string) => void;
   onWriteReview: (itemId: string, itemName: string) => void;
   borrowedItems: BorrowedItem[];
 }
@@ -18,7 +17,6 @@ const ItemDetailView = ({
   onRentRequest,
   onRentRequestWithTime,
   onReturn,
-  onGenerateTips,
   onWriteReview,
   borrowedItems
 }: ItemDetailViewProps) => {
@@ -90,7 +88,7 @@ const ItemDetailView = ({
         <div className="bg-cucumber-50 border border-cucumber-200 rounded-xl p-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-lg font-semibold text-cucumber-800">
-              {item.pricePerDay.toLocaleString()}원/일
+              {item.pricePerDay.toLocaleString()}포인트/일
             </span>
             <span className="text-sm text-gray-600">{item.distance}km</span>
           </div>
@@ -107,15 +105,6 @@ const ItemDetailView = ({
         {/* 액션 버튼들 */}
         <div className="space-y-3">
           {renderActionButton()}
-          
-          {isRentedByMe && (
-            <button
-              onClick={() => onGenerateTips(item.name)}
-              className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
-            >
-              ✨ 사용 팁 생성
-            </button>
-          )}
           
           <button className="w-full bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
             관심 품목 등록

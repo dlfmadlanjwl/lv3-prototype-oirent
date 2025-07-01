@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from 'lucide-react';
 import type { BorrowedItem, RentalItem } from '../types';
 
@@ -77,7 +76,7 @@ const BorrowedItemsView = ({ borrowedItems, items, onBack, onReturn, onItemSelec
                       </p>
                       <div className="flex justify-between items-center">
                         <div className="text-cucumber-600 font-semibold">
-                          {itemDetails.pricePerDay.toLocaleString()}원/일
+                          {itemDetails.pricePerDay.toLocaleString()}포인트/일
                         </div>
                         {borrowedItem.status === '대여 중' && (
                           <button

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import type { RentalItem, BorrowedItem } from '../types';
@@ -105,7 +104,7 @@ const SearchView = ({ items, onSearch, onItemSelect, borrowedItems }: SearchView
                     <p className="text-gray-600 text-sm mb-2 line-clamp-2">{item.description}</p>
                     <div className="flex justify-between items-center">
                       <div className="text-cucumber-600 font-semibold">
-                        {item.pricePerDay.toLocaleString()}원/일
+                        {item.pricePerDay.toLocaleString()}포인트/일
                       </div>
                       <div className="text-xs text-gray-500">
                         ⭐ {item.ownerRating} · {item.ownerName} · {item.distance}km

@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Star } from 'lucide-react';
 import { currentUser } from '../data/mockData';
 import type { RentalItem } from '../types';
@@ -96,7 +95,7 @@ const ProfileView = ({ onBack, items, onItemSelect }: ProfileViewProps) => {
                         </span>
                       </div>
                       <div className="text-cucumber-600 font-semibold">
-                        {item.pricePerDay.toLocaleString()}원/일
+                        {item.pricePerDay.toLocaleString()}포인트/일
                       </div>
                     </div>
                   </div>
