@@ -1,73 +1,89 @@
-# Welcome to your Lovable project
+# lv3-prototype-oirent
 
-## Project info
+## 배포
+- URL : https://prototype-oirent.netlify.app/
 
-**URL**: https://lovable.dev/projects/680e09cf-1752-49e2-8090-11d0cb9c4124
+## **페르소나**
 
-## How can I edit this code?
+### **바쁜 직장인 - 짱구(28세)**
 
-There are several ways of editing your application.
+- **직업**: IT 회사 개발자
+- **라이프스타일**: 매일 출퇴근하며, 평소 컴퓨터·전자기기에 관심이 많음
+- **목표**: **불필요한 지출을 줄이고, 현명하게 소비**하고자 함
+- **니즈**: 제품을 구매하기 전에 **직접 써보고 판단하고 싶음**
+- **페인 포인트**:
+    - 필요한 물건을 **잠깐 써볼 수 있는 방법이 없음**
+    - 중고 거래는 **직거래의 번거로움**, **물건 상태에 대한 신뢰 부족**, **소유 부담**
+    - **시간과 거리**에 맞는 대여처를 빠르게 찾는 것이 어려움
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/680e09cf-1752-49e2-8090-11d0cb9c4124) and start prompting.
+## **사용자 시나리오 및 스토리**
 
-Changes made via Lovable will be committed automatically to this repo.
+### **새 모니터 구매 전, 잠깐 써보고 결정하고 싶은 짱구**
 
-**Use your preferred IDE**
+**상황**: 짱구는 34인치 울트라와이드 모니터 구매를 고려 중이다. 하지만 가격이 비싸고, 자신에게 맞을지 확신이 없다. 2~3일만 실제로 써보면 결정이 쉬울 것 같아 대여 서비스를 찾아본다.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**사용자 시나리오**:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. 짱구는 스마트폰에서 대여 앱을 연다.
+2. 검색창에 "울트라와이드 모니터" 입력
+3. 반경 2km 내에 2건의 대여 가능 항목 발견
+4. 대여 조건(1일 500코인, 직거래 가능)을 보고 채팅을 통해 대여 요청 및 약속 잡기
+5. 퇴근길에 근처 공유 오피스에서 만나 수령
+6. 주말에 모니터를 실제로 사용해본 후, 온라인을 통해 새 상품 구매 결정
 
-Follow these steps:
+**사용자 스토리**:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+> “신중하게 소비하고 싶지만, 매번 직접 경험해보긴 어려웠어요. 근처에서 며칠만 써볼 수 있다면, 돈도 아끼고 실패 없는 소비를 할 수 있죠.”
+> 
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**인수 조건**:
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **Given**: 사용자가 대여 앱에 접속했을 때
+- **When**: 원하는 물건의 키워드를 검색했을 때
+- **Then**: **반경 10km 이내**의 대여 가능한 품목이 3초 이내에 나타나야 한다
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## **핵심 가치 제안**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. **합리적이고 순환적인 소비문화**
+    
+    → 잠깐 쓰고 마는 제품을 굳이 사지 않아도 되는 경제적 선택
+    
+2. **체험 기반 소비 지원**
+    
+    → 물건을 소유하기 전에 직접 사용해볼 수 있는 경험 제공
+    
+3. **시간과 거리 중심의 실시간 연결**
+    
+    → 위치 기반 필터링으로 ‘근처’의 대여자와 빠르게 연결
+    
+4. **취향과 조건에 맞는 맞춤 대여**
+    
+    → 사용 목적, 대여 기간, 금액 등을 기준으로 정교한 매칭 가능
+    
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## **핵심 기능**
 
-## What technologies are used for this project?
+- **위치 기반 대여 탐색**: 반경 설정으로 근처 대여 가능한 품목만 노출
+- **품목별 체험 리뷰 확인**: 다른 사용자의 대여 후 리뷰 및 사진 제공
+- **1:1 채팅 및 대여 요청**: 원하는 조건이면 바로 요청 가능 (예약·직거래·택배 선택 가능)
+- **안전한 사용자 간 거래 시스템**: 후기 등 활동을 기반으로한 신뢰도 점수
+- **관심 품목 등록**: 원하는 물건이 올라오면 알림 제공
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## **구현 범위 (프로토타입)**
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/680e09cf-1752-49e2-8090-11d0cb9c4124) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- 실제 지도 API 없이, Mocked 위치 데이터를 기반으로 반경 필터 적용
+- 대여 품목은 JSON 형태의 정적 목록 사용 (ex. 모니터, 키보드, 전공책, 닌텐도 칩 등)
+- 검색 → 조건 확인 → 대여 요청 및 채팅 -> 반납 UI 플로우 구현
+- 내 프로필 및 상대방 프로필에서 신뢰도 점수 확인 가능
+- 대여자에 대한 리뷰 작성 구현
+- 대여 물품에 대한 리뷰 작성 구현
+- 채팅·프로필·예약은 미리 정의된 흐름으로 목업 UI 제공
+- 사용자 경험 흐름 위주의 Clickable Prototype
