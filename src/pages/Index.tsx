@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import SearchView from '../components/SearchView';
@@ -10,6 +9,7 @@ import ProfileView from '../components/ProfileView';
 import ReviewView from '../components/ReviewView';
 import MessageModal from '../components/MessageModal';
 import TipsModal from '../components/TipsModal';
+import RentalRequestView from '../components/RentalRequestView';
 import { rentalItems, jjangguBorrowedItems, mockChatList } from '../data/mockData';
 import type { RentalItem, BorrowedItem, ChatItem, Review } from '../types';
 
@@ -23,6 +23,7 @@ const Index = () => {
   const [items, setItems] = useState<RentalItem[]>(rentalItems);
   const [searchResults, setSearchResults] = useState<RentalItem[]>(rentalItems);
   const [reviewData, setReviewData] = useState<{ itemId: string; itemName: string } | null>(null);
+  const [rentalRequestItem, setRentalRequestItem] = useState<RentalItem | null>(null);
 
   // 검색 함수
   const handleSearch = (query: string) => {
@@ -138,6 +139,12 @@ const Index = () => {
     setCurrentView('chat');
   };
 
+  // 대여 시간 선택 및 요청 페이지로 이동
+  const handleRentRequestWithTime = (item: RentalItem) => {
+    setRentalRequestItem(item);
+    setCurrentView('rentalRequest');
+  };
+
   // 뷰 렌더링
   const renderCurrentView = () => {
     switch (currentView) {
@@ -156,6 +163,7 @@ const Index = () => {
             item={selectedItem}
             onBack={() => setCurrentView('search')}
             onRentRequest={handleRentRequest}
+            onRentRequestWithTime={handleRentRequestWithTime}
             onReturn={handleReturn}
             onGenerateTips={generateTips}
             onWriteReview={(itemId, itemName) => {
@@ -205,6 +213,23 @@ const Index = () => {
             itemName={reviewData.itemName}
             onBack={() => setCurrentView('itemDetail')}
             onSubmit={handleReviewSubmit}
+          />
+        ) : null;
+      case 'rentalRequest':
+        return rentalRequestItem ? (
+          <RentalRequestView
+            item={rentalRequestItem}
+            onBack={() => setCurrentView('itemDetail')}
+            onRequest={(itemId, startDate, endDate) => {
+              // 실제 대여 요청 처리: 기존 handleRentRequest 재사용 가능
+              handleRentRequest(itemId);
+              setCurrentView('itemDetail');
+            }}
+            reservedTimes={[
+              // 예시: 예약된 시간대 (실제 데이터로 교체 가능)
+              { start: '2024-06-22T10:00', end: '2024-06-22T14:00' },
+              { start: '2024-06-23T09:00', end: '2024-06-23T12:00' }
+            ]}
           />
         ) : null;
       default:

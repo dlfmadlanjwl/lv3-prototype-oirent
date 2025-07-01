@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Star } from 'lucide-react';
 import type { RentalItem, BorrowedItem } from '../types';
 
@@ -6,6 +5,7 @@ interface ItemDetailViewProps {
   item: RentalItem;
   onBack: () => void;
   onRentRequest: (itemId: string) => void;
+  onRentRequestWithTime?: (item: RentalItem) => void;
   onReturn: (itemId: string) => void;
   onGenerateTips: (itemName: string) => void;
   onWriteReview: (itemId: string, itemName: string) => void;
@@ -16,6 +16,7 @@ const ItemDetailView = ({
   item,
   onBack,
   onRentRequest,
+  onRentRequestWithTime,
   onReturn,
   onGenerateTips,
   onWriteReview,
@@ -38,7 +39,7 @@ const ItemDetailView = ({
     if (item.isAvailable) {
       return (
         <button
-          onClick={() => onRentRequest(item.id)}
+          onClick={() => onRentRequestWithTime ? onRentRequestWithTime(item) : onRentRequest(item.id)}
           className="w-full bg-cucumber-600 text-white py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors"
         >
           대여 요청하기
