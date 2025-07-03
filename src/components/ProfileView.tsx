@@ -1,4 +1,4 @@
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Star, Plus } from 'lucide-react';
 import { currentUser } from '../data/mockData';
 import type { RentalItem } from '../types';
 import { useState } from 'react';
@@ -10,9 +10,10 @@ interface ProfileViewProps {
   onItemSelect: (item: RentalItem) => void;
   onReturn?: (itemId: string) => void;
   onNavigateToPointHistory?: () => void;
+  onRegisterItem?: () => void;
 }
 
-const ProfileView = ({ onBack, items, favoriteItems, onItemSelect, onReturn, onNavigateToPointHistory }: ProfileViewProps) => {
+const ProfileView = ({ onBack, items, favoriteItems, onItemSelect, onReturn, onNavigateToPointHistory, onRegisterItem }: ProfileViewProps) => {
   const [activeTab, setActiveTab] = useState<'myItems' | 'favorites'>('myItems');
 
   return (
@@ -237,6 +238,19 @@ const ProfileView = ({ onBack, items, favoriteItems, onItemSelect, onReturn, onN
             💰 포인트 내역 보기
           </button>
         </div>
+
+        {/* 물품 등록 버튼 */}
+        {onRegisterItem && (
+          <div className="px-4 py-2">
+            <button 
+              onClick={onRegisterItem}
+              className="w-full bg-cucumber-600 text-white py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors flex items-center justify-center"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              물품 등록하기
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

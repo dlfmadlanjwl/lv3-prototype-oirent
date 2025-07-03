@@ -87,3 +87,30 @@
 - 대여 물품에 대한 리뷰 작성 구현
 - 채팅·프로필·예약은 미리 정의된 흐름으로 목업 UI 제공
 - 사용자 경험 흐름 위주의 Clickable Prototype
+
+## **설치 및 실행**
+
+### **필수 요구사항**
+- Node.js 18.0.0 이상
+- npm 또는 yarn
+
+### **설치 방법**
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+```
+
+### **카카오맵 API 설정 (선택사항)**
+지도에서 위치를 선택하는 기능을 사용하려면 카카오맵 API 키가 필요합니다.
+
+1. [카카오 개발자 센터](https://developers.kakao.com/)에서 애플리케이션을 생성
+2. JavaScript 앱 키를 발급받음
+3. 프로젝트 루트에 `.env` 파일을 생성하고 다음 내용을 추가:
+```
+VITE_KAKAO_MAP_API_KEY=your_kakao_map_api_key_here
+```
+
+API 키가 설정되지 않은 경우, 위치 정보는 수동으로 입력할 수 있습니다.

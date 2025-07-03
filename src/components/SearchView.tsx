@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import type { RentalItem, BorrowedItem } from '../types';
 
 interface SearchViewProps {
@@ -7,13 +7,14 @@ interface SearchViewProps {
   onSearch: (query: string) => void;
   onItemSelect: (item: RentalItem) => void;
   borrowedItems: BorrowedItem[];
+  onRegisterItem?: () => void;
 }
 
 const categories = ['전체', '디지털', '생활용품', '공간대여', '인력대여'] as const;
 
 type Category = typeof categories[number];
 
-const SearchView = ({ items, onSearch, onItemSelect, borrowedItems }: SearchViewProps) => {
+const SearchView = ({ items, onSearch, onItemSelect, borrowedItems, onRegisterItem }: SearchViewProps) => {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('전체');
 
@@ -64,6 +65,16 @@ const SearchView = ({ items, onSearch, onItemSelect, borrowedItems }: SearchView
             검색
           </button>
         </form>
+        {/* 물품 등록 버튼 */}
+        {onRegisterItem && (
+          <button
+            onClick={onRegisterItem}
+            className="w-full mt-3 bg-cucumber-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors flex items-center justify-center"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            물품 등록하기
+          </button>
+        )}
         {/* 카테고리 필터 */}
         <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
           {categories.map(cat => (

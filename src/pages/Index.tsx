@@ -12,6 +12,7 @@ import RentalRequestView from '../components/RentalRequestView';
 import PointHistoryView from '../components/PointHistoryView';
 import OwnerProfileView from '../components/OwnerProfileView';
 import OwnerRentalPeriodView from '../components/OwnerRentalPeriodView';
+import ItemRegistrationView from '../components/ItemRegistrationView';
 import { rentalItems, jjangguBorrowedItems, mockChatList, pointTransactions, currentUser } from '../data/mockData';
 import type { RentalItem, BorrowedItem, ChatItem, Review, FavoriteItem } from '../types';
 
@@ -182,6 +183,11 @@ const Index = () => {
     setCurrentView('itemDetail');
   };
 
+  // 물품 등록 페이지로 이동
+  const handleRegisterItem = () => {
+    setCurrentView('itemRegistration');
+  };
+
   // 뷰 렌더링
   const renderCurrentView = () => {
     switch (currentView) {
@@ -192,6 +198,7 @@ const Index = () => {
             onSearch={handleSearch}
             onItemSelect={handleItemSelect}
             borrowedItems={borrowedItems}
+            onRegisterItem={handleRegisterItem}
           />
         );
       case 'itemDetail':
@@ -253,6 +260,7 @@ const Index = () => {
             onItemSelect={handleItemSelect}
             onReturn={handleReturn}
             onNavigateToPointHistory={handleNavigateToPointHistory}
+            onRegisterItem={handleRegisterItem}
           />
         );
       case 'review':
@@ -324,6 +332,10 @@ const Index = () => {
             onSave={handleSavePeriod}
           />
         ) : null;
+      case 'itemRegistration':
+        return (
+          <ItemRegistrationView />
+        );
       default:
         return null;
     }
