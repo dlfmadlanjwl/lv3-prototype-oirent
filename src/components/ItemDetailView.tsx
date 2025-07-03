@@ -8,7 +8,12 @@ interface ItemDetailViewProps {
   onRentRequestWithTime?: (item: RentalItem) => void;
   onReturn: (itemId: string) => void;
   onWriteReview: (itemId: string, itemName: string) => void;
+  onToggleFavorite: (itemId: string) => void;
+  isFavorite: boolean;
   borrowedItems: BorrowedItem[];
+  currentUserId?: string;
+  onOwnerClick?: (ownerId: string) => void;
+  onSetPeriod?: () => void;
 }
 
 const ItemDetailView = ({
@@ -18,18 +23,25 @@ const ItemDetailView = ({
   onRentRequestWithTime,
   onReturn,
   onWriteReview,
-  borrowedItems
+  onToggleFavorite,
+  isFavorite,
+  borrowedItems,
+  currentUserId = 'jjanggu',
+  onOwnerClick,
+  onSetPeriod
 }: ItemDetailViewProps) => {
   const isRentedByMe = borrowedItems.some(b => b.itemId === item.id && b.status === '대여 중');
+  const isOwner = item.ownerId === currentUserId;
+  const canReturn = isOwner && !item.isAvailable;
   
   const renderActionButton = () => {
-    if (isRentedByMe) {
+    if (canReturn) {
       return (
         <button
           onClick={() => onReturn(item.id)}
           className="w-full bg-cucumber-600 text-white py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors"
         >
-          반납하기
+          반납 처리하기
         </button>
       );
     }
@@ -94,7 +106,12 @@ const ItemDetailView = ({
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-700">대여자:</span>
-            <span className="font-medium text-gray-900">{item.ownerName}</span>
+            <span
+              className="font-medium text-gray-900 underline cursor-pointer hover:text-cucumber-600"
+              onClick={() => onOwnerClick && onOwnerClick(item.ownerId)}
+            >
+              {item.ownerName}
+            </span>
             <div className="flex items-center space-x-1">
               <Star size={14} className="text-yellow-400 fill-current" />
               <span className="text-sm text-gray-600">{item.ownerRating}</span>
@@ -106,9 +123,24 @@ const ItemDetailView = ({
         <div className="space-y-3">
           {renderActionButton()}
           
-          <button className="w-full bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-            관심 품목 등록
+          <button 
+            onClick={() => onToggleFavorite(item.id)}
+            className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+              isFavorite 
+                ? 'bg-red-500 text-white hover:bg-red-600' 
+                : 'bg-gray-500 text-white hover:bg-gray-600'
+            }`}
+          >
+            {isFavorite ? '❤️ 관심 품목 해제' : '🤍 관심 품목 등록'}
           </button>
+          {isOwner && onSetPeriod && (
+            <button
+              onClick={onSetPeriod}
+              className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+            >
+              📅 대여 가능 기간 설정
+            </button>
+          )}
         </div>
 
         {/* 체험 리뷰 섹션 */}

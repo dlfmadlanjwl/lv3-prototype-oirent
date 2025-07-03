@@ -1,5 +1,4 @@
-
-import type { RentalItem, BorrowedItem, ChatItem } from '../types';
+import type { RentalItem, BorrowedItem, ChatItem, PointTransaction } from '../types';
 
 export const rentalItems: RentalItem[] = [
   {
@@ -24,7 +23,14 @@ export const rentalItems: RentalItem[] = [
       }
     ],
     imageUrl: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=300&fit=crop',
-    ownerId: 'kimdev'
+    ownerId: 'kimdev',
+    category: '디지털',
+    availablePeriods: [
+      {
+        start: '2024-07-04',
+        end: '2024-07-06'
+      }
+    ]
   },
   {
     id: '2',
@@ -39,7 +45,8 @@ export const rentalItems: RentalItem[] = [
     reviews: [],
     imageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
     ownerId: 'parkcook',
-    currentRenterId: 'other'
+    currentRenterId: 'other',
+    category: '생활용품'
   },
   {
     id: '3',
@@ -63,7 +70,8 @@ export const rentalItems: RentalItem[] = [
       }
     ],
     imageUrl: 'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=400&h=300&fit=crop',
-    ownerId: 'choicamp'
+    ownerId: 'choicamp',
+    category: '생활용품'
   },
   {
     id: '4',
@@ -78,7 +86,8 @@ export const rentalItems: RentalItem[] = [
     reviews: [],
     imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
     ownerId: 'junggame',
-    currentRenterId: 'jjanggu'
+    currentRenterId: 'jjanggu',
+    category: '디지털'
   },
   {
     id: '5',
@@ -92,7 +101,8 @@ export const rentalItems: RentalItem[] = [
     isAvailable: true,
     reviews: [],
     imageUrl: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400&h=300&fit=crop',
-    ownerId: 'diymaster'
+    ownerId: 'diymaster',
+    category: '생활용품'
   },
   {
     id: '6',
@@ -106,7 +116,79 @@ export const rentalItems: RentalItem[] = [
     isAvailable: true,
     reviews: [],
     imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-    ownerId: 'healthmania'
+    ownerId: 'healthmania',
+    category: '디지털'
+  },
+  {
+    id: '7',
+    name: '프로젝터',
+    description: '휴대용 미니 프로젝터입니다. 영화 감상이나 프레젠테이션에 최적입니다.',
+    pricePerDay: 10000,
+    ownerName: '짱구 (Jjanggu)',
+    ownerRating: 4.9,
+    location: { lat: 37.5665, lng: 126.9780 },
+    distance: 0.0,
+    isAvailable: false,
+    reviews: [],
+    imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
+    ownerId: 'jjanggu',
+    currentRenterId: 'user1',
+    category: '디지털'
+  },
+  {
+    id: '8',
+    name: '블루투스 스피커',
+    description: 'JBL 블루투스 스피커입니다. 휴대하기 편하고 음질이 좋습니다.',
+    pricePerDay: 3000,
+    ownerName: '짱구 (Jjanggu)',
+    ownerRating: 4.9,
+    location: { lat: 37.5665, lng: 126.9780 },
+    distance: 0.0,
+    isAvailable: true,
+    reviews: [
+      {
+        id: '3',
+        itemId: '8',
+        reviewerName: '음악러버',
+        rating: 5,
+        content: '음질이 정말 좋아요! 파티할 때 완벽했어요.',
+        date: '2024-06-12',
+        target: '대여 물품'
+      }
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop',
+    ownerId: 'jjanggu',
+    category: '디지털'
+  },
+  {
+    id: '9',
+    name: '스터디룸(2시간)',
+    description: '조용한 스터디룸, 2시간 단위 대여 가능',
+    pricePerDay: 12000,
+    ownerName: '공간주인',
+    ownerRating: 4.7,
+    location: { lat: 37.5665, lng: 126.9780 },
+    distance: 0.3,
+    isAvailable: true,
+    reviews: [],
+    imageUrl: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=300&fit=crop',
+    ownerId: 'spaceowner',
+    category: '공간대여'
+  },
+  {
+    id: '10',
+    name: '이사 도우미(3시간)',
+    description: '이사/짐 옮기기 도와드립니다. 3시간 기준',
+    pricePerDay: 50000,
+    ownerName: '이사왕',
+    ownerRating: 4.8,
+    location: { lat: 37.5665, lng: 126.9780 },
+    distance: 1.0,
+    isAvailable: true,
+    reviews: [],
+    imageUrl: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&h=300&fit=crop',
+    ownerId: 'movehelper',
+    category: '인력대여'
   }
 ];
 
@@ -115,6 +197,11 @@ export const jjangguBorrowedItems: BorrowedItem[] = [
     itemId: '4',
     status: '대여 중',
     rentDate: '2024-06-18T10:00:00Z'
+  },
+  {
+    itemId: '8',
+    status: '반납 완료',
+    rentDate: '2024-06-10T10:00:00Z'
   }
 ];
 
@@ -141,3 +228,56 @@ export const currentUser = {
   totalTransactions: 23,
   profileImage: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=100&h=100&fit=crop&crop=face'
 };
+
+export const pointTransactions: PointTransaction[] = [
+  // 빌려줘서 얻은 포인트 (수입)
+  {
+    id: '1',
+    type: 'earned',
+    amount: 10000,
+    itemName: '프로젝터',
+    date: '2024-06-20T14:30:00Z',
+    description: 'user1님이 프로젝터를 대여하여 10000포인트를 획득했습니다.'
+  },
+  {
+    id: '2',
+    type: 'earned',
+    amount: 3000,
+    itemName: '블루투스 스피커',
+    date: '2024-06-15T10:15:00Z',
+    description: '음악러버님이 블루투스 스피커를 대여하여 3000포인트를 획득했습니다.'
+  },
+  {
+    id: '3',
+    type: 'earned',
+    amount: 8000,
+    itemName: '캠핑 텐트',
+    date: '2024-06-10T16:45:00Z',
+    description: '캠핑러님이 캠핑 텐트를 대여하여 8000포인트를 획득했습니다.'
+  },
+  // 빌려서 사용한 포인트 (지출)
+  {
+    id: '4',
+    type: 'spent',
+    amount: 4000,
+    itemName: '닌텐도 스위치',
+    date: '2024-06-18T09:20:00Z',
+    description: '정게임님의 닌텐도 스위치를 대여하여 4000포인트를 사용했습니다.'
+  },
+  {
+    id: '5',
+    type: 'spent',
+    amount: 6000,
+    itemName: '전동 드릴 세트',
+    date: '2024-06-12T13:10:00Z',
+    description: 'DIY마스터님의 전동 드릴 세트를 대여하여 6000포인트를 사용했습니다.'
+  },
+  {
+    id: '6',
+    type: 'spent',
+    amount: 5000,
+    itemName: '울트라와이드 모니터',
+    date: '2024-06-08T11:30:00Z',
+    description: '김개발님의 울트라와이드 모니터를 대여하여 5000포인트를 사용했습니다.'
+  }
+];

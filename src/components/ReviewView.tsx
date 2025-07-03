@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import type { Review } from '../types';
@@ -6,12 +5,12 @@ import type { Review } from '../types';
 interface ReviewViewProps {
   itemId: string;
   itemName: string;
+  target?: '대여자' | '대여 물품';
   onBack: () => void;
   onSubmit: (review: Review) => void;
 }
 
-const ReviewView = ({ itemId, itemName, onBack, onSubmit }: ReviewViewProps) => {
-  const [target, setTarget] = useState<'대여자' | '대여 물품'>('대여 물품');
+const ReviewView = ({ itemId, itemName, target = '대여 물품', onBack, onSubmit }: ReviewViewProps) => {
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState('');
 
@@ -21,17 +20,15 @@ const ReviewView = ({ itemId, itemName, onBack, onSubmit }: ReviewViewProps) => 
       return;
     }
 
-    const review: Review = {
+    onSubmit({
       id: Date.now().toString(),
       itemId,
       reviewerName: '짱구',
       rating,
       content: content.trim(),
-      date: new Date().toISOString().split('T')[0],
-      target
-    };
-
-    onSubmit(review);
+      date: new Date().toISOString().slice(0, 10),
+      target,
+    });
   };
 
   return (
@@ -47,7 +44,7 @@ const ReviewView = ({ itemId, itemName, onBack, onSubmit }: ReviewViewProps) => 
             <span>뒤로 가기</span>
           </button>
         </div>
-        <h1 className="text-xl font-bold text-gray-900 mt-2">리뷰 작성</h1>
+        <h1 className="text-2xl font-bold mb-4">{target} 후기 작성</h1>
       </div>
 
       {/* 리뷰 작성 폼 */}
@@ -63,14 +60,7 @@ const ReviewView = ({ itemId, itemName, onBack, onSubmit }: ReviewViewProps) => 
           <label className="block text-sm font-medium text-gray-700 mb-2">
             리뷰 대상
           </label>
-          <select
-            value={target}
-            onChange={(e) => setTarget(e.target.value as '대여자' | '대여 물품')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cucumber-500 focus:border-transparent"
-          >
-            <option value="대여 물품">대여 물품</option>
-            <option value="대여자">대여자</option>
-          </select>
+          <input type="hidden" value={target} />
         </div>
 
         {/* 별점 입력 */}

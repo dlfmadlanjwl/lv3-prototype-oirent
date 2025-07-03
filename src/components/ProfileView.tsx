@@ -1,14 +1,20 @@
 import { ArrowLeft, Star } from 'lucide-react';
 import { currentUser } from '../data/mockData';
 import type { RentalItem } from '../types';
+import { useState } from 'react';
 
 interface ProfileViewProps {
   onBack: () => void;
   items: RentalItem[];
+  favoriteItems: RentalItem[];
   onItemSelect: (item: RentalItem) => void;
+  onReturn?: (itemId: string) => void;
+  onNavigateToPointHistory?: () => void;
 }
 
-const ProfileView = ({ onBack, items, onItemSelect }: ProfileViewProps) => {
+const ProfileView = ({ onBack, items, favoriteItems, onItemSelect, onReturn, onNavigateToPointHistory }: ProfileViewProps) => {
+  const [activeTab, setActiveTab] = useState<'myItems' | 'favorites'>('myItems');
+
   return (
     <div className="max-w-lg mx-auto bg-white min-h-screen">
       {/* 헤더 */}
@@ -60,55 +66,177 @@ const ProfileView = ({ onBack, items, onItemSelect }: ProfileViewProps) => {
           <p className="text-cucumber-700">총 {currentUser.totalTransactions}회 거래 완료</p>
         </div>
 
-        {/* 내가 올린 물건 섹션 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">내가 올린 물건</h3>
-          
-          {items.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-4">📱</div>
-              <p className="text-gray-500">아직 올린 물건이 없습니다.</p>
+        {/* 탭 버튼들 */}
+        <div className="flex space-x-1 mb-4">
+          <button
+            onClick={() => setActiveTab('myItems')}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              activeTab === 'myItems'
+                ? 'bg-cucumber-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            내 물품 ({items.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('favorites')}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              activeTab === 'favorites'
+                ? 'bg-cucumber-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            관심 품목 ({favoriteItems.length})
+          </button>
+        </div>
+
+        {/* 탭 내용 */}
+        {activeTab === 'myItems' ? (
+          // 내 물품 목록
+          <div className="space-y-6">
+            {/* 대여 중인 물품 */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-3">대여 중인 물품</h4>
+              <div className="space-y-4">
+                {items.filter(item => !item.isAvailable).length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">대여 중인 물품이 없습니다.</p>
+                ) : (
+                  items.filter(item => !item.isAvailable).map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-lg p-4 border border-gray-200"
+                    >
+                      <div className="flex space-x-4">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg cursor-pointer"
+                          onClick={() => onItemSelect(item)}
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1 cursor-pointer" onClick={() => onItemSelect(item)}>{item.name}</h3>
+                          <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-cucumber-600 font-semibold">
+                              {item.pricePerDay.toLocaleString()}포인트/일
+                            </span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs px-2 py-1 rounded bg-red-100 text-red-800">
+                                대여 중
+                              </span>
+                              {onReturn && (
+                                <button
+                                  onClick={() => onReturn(item.id)}
+                                  className="px-3 py-1 bg-cucumber-600 text-white text-xs rounded hover:bg-cucumber-700 transition-colors"
+                                >
+                                  반납 처리
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {items.map((item) => (
+
+            {/* 대여 가능한 물품 */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-3">대여 가능한 물품</h4>
+              <div className="space-y-4">
+                {items.filter(item => item.isAvailable).length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">대여 가능한 물품이 없습니다.</p>
+                ) : (
+                  items.filter(item => item.isAvailable).map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => onItemSelect(item)}
+                      className="bg-white rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex space-x-4">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
+                          <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-cucumber-600 font-semibold">
+                              {item.pricePerDay.toLocaleString()}포인트/일
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-800">
+                              대여 가능
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          // 관심 품목 목록
+          <div className="space-y-4">
+            {favoriteItems.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">관심 품목이 없습니다.</p>
+            ) : (
+              favoriteItems.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => onItemSelect(item)}
-                  className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
                 >
                   <div className="flex space-x-4">
                     <img
                       src={item.imageUrl}
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded-lg"
+                      className="w-20 h-20 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-cucumber-600 font-semibold">
+                          {item.pricePerDay.toLocaleString()}포인트/일
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded ${
                           item.isAvailable 
-                            ? 'text-blue-600 bg-blue-100'
-                            : 'text-red-600 bg-red-100'
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
                         }`}>
                           {item.isAvailable ? '대여 가능' : '대여 중'}
                         </span>
                       </div>
-                      <div className="text-cucumber-600 font-semibold">
-                        {item.pricePerDay.toLocaleString()}포인트/일
-                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        )}
 
         {/* 프로필 수정 버튼 */}
-        <button className="w-full bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-          프로필 수정
-        </button>
+        <div className="px-4 py-4">
+          <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+            프로필 수정
+          </button>
+        </div>
+
+        {/* 포인트 내역 버튼 */}
+        <div className="px-4 py-2">
+          <button 
+            onClick={() => onNavigateToPointHistory && onNavigateToPointHistory()}
+            className="w-full bg-cucumber-600 text-white py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors"
+          >
+            💰 포인트 내역 보기
+          </button>
+        </div>
       </div>
     </div>
   );

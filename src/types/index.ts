@@ -1,4 +1,3 @@
-
 export interface RentalItem {
   id: string;
   name: string;
@@ -16,6 +15,8 @@ export interface RentalItem {
   imageUrl: string;
   ownerId: string;
   currentRenterId?: string;
+  availablePeriods?: { start: string; end: string }[]; // 대여 가능 기간
+  category: '디지털' | '생활용품' | '공간대여' | '인력대여';
 }
 
 export interface BorrowedItem {
@@ -48,4 +49,18 @@ export interface User {
   rating: number;
   totalTransactions: number;
   profileImage: string;
+}
+
+export interface FavoriteItem {
+  itemId: string;
+  addedAt: string; // ISO string
+}
+
+export interface PointTransaction {
+  id: string;
+  type: 'earned' | 'spent'; // 'earned': 빌려줘서 얻은 포인트, 'spent': 빌려서 사용한 포인트
+  amount: number;
+  itemName: string;
+  date: string; // ISO string
+  description: string;
 }

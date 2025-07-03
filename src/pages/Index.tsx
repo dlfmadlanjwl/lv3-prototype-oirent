@@ -9,8 +9,11 @@ import ProfileView from '../components/ProfileView';
 import ReviewView from '../components/ReviewView';
 import MessageModal from '../components/MessageModal';
 import RentalRequestView from '../components/RentalRequestView';
-import { rentalItems, jjangguBorrowedItems, mockChatList } from '../data/mockData';
-import type { RentalItem, BorrowedItem, ChatItem, Review } from '../types';
+import PointHistoryView from '../components/PointHistoryView';
+import OwnerProfileView from '../components/OwnerProfileView';
+import OwnerRentalPeriodView from '../components/OwnerRentalPeriodView';
+import { rentalItems, jjangguBorrowedItems, mockChatList, pointTransactions, currentUser } from '../data/mockData';
+import type { RentalItem, BorrowedItem, ChatItem, Review, FavoriteItem } from '../types';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<string>('search');
@@ -20,8 +23,12 @@ const Index = () => {
   const [messageModal, setMessageModal] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const [items, setItems] = useState<RentalItem[]>(rentalItems);
   const [searchResults, setSearchResults] = useState<RentalItem[]>(rentalItems);
-  const [reviewData, setReviewData] = useState<{ itemId: string; itemName: string } | null>(null);
+  const [reviewData, setReviewData] = useState<{ itemId: string; itemName: string; target?: string } | null>(null);
   const [rentalRequestItem, setRentalRequestItem] = useState<RentalItem | null>(null);
+  const [favoriteItems, setFavoriteItems] = useState<FavoriteItem[]>([]);
+  const [previousView, setPreviousView] = useState<string>('search');
+  const [ownerProfile, setOwnerProfile] = useState<{ ownerId: string } | null>(null);
+  const [periodItem, setPeriodItem] = useState<RentalItem | null>(null);
 
   // 검색 함수
   const handleSearch = (query: string) => {
@@ -40,6 +47,7 @@ const Index = () => {
   // 물품 선택
   const handleItemSelect = (item: RentalItem) => {
     setSelectedItem(item);
+    setPreviousView(currentView);
     setCurrentView('itemDetail');
   };
 
@@ -132,6 +140,48 @@ const Index = () => {
     setCurrentView('rentalRequest');
   };
 
+  // 관심 품목 등록/해제
+  const handleToggleFavorite = (itemId: string) => {
+    setFavoriteItems(prev => {
+      const isFavorite = prev.some(fav => fav.itemId === itemId);
+      if (isFavorite) {
+        return prev.filter(fav => fav.itemId !== itemId);
+      } else {
+        return [...prev, { itemId, addedAt: new Date().toISOString() }];
+      }
+    });
+  };
+
+  // 관심 품목 여부 확인
+  const isFavorite = (itemId: string) => {
+    return favoriteItems.some(fav => fav.itemId === itemId);
+  };
+
+  // 포인트 내역 페이지로 이동
+  const handleNavigateToPointHistory = () => {
+    setCurrentView('pointHistory');
+  };
+
+  // 대여자 정보 보기
+  const handleOwnerClick = (ownerId: string) => {
+    setOwnerProfile({ ownerId });
+    setCurrentView('ownerProfile');
+  };
+
+  // 대여 가능 기간 설정 진입
+  const handleSetPeriod = () => {
+    setPeriodItem(selectedItem);
+    setCurrentView('setPeriod');
+  };
+
+  // 대여 가능 기간 저장
+  const handleSavePeriod = (periods: { start: string; end: string }[]) => {
+    if (!periodItem) return;
+    setItems(prev => prev.map(item => item.id === periodItem.id ? { ...item, availablePeriods: periods } : item));
+    setSearchResults(prev => prev.map(item => item.id === periodItem.id ? { ...item, availablePeriods: periods } : item));
+    setCurrentView('itemDetail');
+  };
+
   // 뷰 렌더링
   const renderCurrentView = () => {
     switch (currentView) {
@@ -148,7 +198,7 @@ const Index = () => {
         return selectedItem ? (
           <ItemDetailView
             item={selectedItem}
-            onBack={() => setCurrentView('search')}
+            onBack={() => setCurrentView(previousView)}
             onRentRequest={handleRentRequest}
             onRentRequestWithTime={handleRentRequestWithTime}
             onReturn={handleReturn}
@@ -156,7 +206,12 @@ const Index = () => {
               setReviewData({ itemId, itemName });
               setCurrentView('review');
             }}
+            onToggleFavorite={handleToggleFavorite}
+            isFavorite={isFavorite(selectedItem.id)}
             borrowedItems={borrowedItems}
+            currentUserId="jjanggu"
+            onOwnerClick={handleOwnerClick}
+            onSetPeriod={handleSetPeriod}
           />
         ) : null;
       case 'chatList':
@@ -165,6 +220,7 @@ const Index = () => {
             chatList={mockChatList}
             onBack={() => setCurrentView('search')}
             onChatSelect={handleChatSelect}
+            items={items}
           />
         );
       case 'chat':
@@ -182,6 +238,10 @@ const Index = () => {
             onBack={() => setCurrentView('search')}
             onReturn={handleReturn}
             onItemSelect={handleItemSelect}
+            onWriteReview={(itemId, itemName, target) => {
+              setReviewData({ itemId, itemName, target });
+              setCurrentView('review');
+            }}
           />
         );
       case 'profile':
@@ -189,7 +249,10 @@ const Index = () => {
           <ProfileView
             onBack={() => setCurrentView('search')}
             items={items.filter(item => item.ownerId === 'jjanggu')}
+            favoriteItems={items.filter(item => favoriteItems.some(fav => fav.itemId === item.id))}
             onItemSelect={handleItemSelect}
+            onReturn={handleReturn}
+            onNavigateToPointHistory={handleNavigateToPointHistory}
           />
         );
       case 'review':
@@ -197,6 +260,7 @@ const Index = () => {
           <ReviewView
             itemId={reviewData.itemId}
             itemName={reviewData.itemName}
+            target={reviewData.target}
             onBack={() => setCurrentView('itemDetail')}
             onSubmit={handleReviewSubmit}
           />
@@ -216,6 +280,48 @@ const Index = () => {
               { start: '2024-06-22T10:00', end: '2024-06-22T14:00' },
               { start: '2024-06-23T09:00', end: '2024-06-23T12:00' }
             ]}
+          />
+        ) : null;
+      case 'pointHistory':
+        return (
+          <PointHistoryView
+            onBack={() => setCurrentView('profile')}
+            transactions={pointTransactions}
+          />
+        );
+      case 'ownerProfile':
+        if (!ownerProfile) return null;
+        // ownerId로 User 정보 찾기
+        let owner = currentUser;
+        if (ownerProfile.ownerId !== currentUser.id) {
+          const foundItem = items.find(i => i.ownerId === ownerProfile.ownerId);
+          if (foundItem) {
+            owner = {
+              id: foundItem.ownerId,
+              name: foundItem.ownerName,
+              occupation: '',
+              rating: foundItem.ownerRating,
+              totalTransactions: 0,
+              profileImage: ''
+            };
+          }
+        }
+        const ownerItems = items.filter(i => i.ownerId === ownerProfile.ownerId);
+        const ownerReviews = items.flatMap(i => i.reviews.filter(r => i.ownerId === ownerProfile.ownerId && r.target === '대여자'));
+        return (
+          <OwnerProfileView
+            owner={owner}
+            items={ownerItems}
+            reviews={ownerReviews}
+            onBack={() => setCurrentView('itemDetail')}
+          />
+        );
+      case 'setPeriod':
+        return periodItem ? (
+          <OwnerRentalPeriodView
+            item={periodItem}
+            onBack={() => setCurrentView('itemDetail')}
+            onSave={handleSavePeriod}
           />
         ) : null;
       default:

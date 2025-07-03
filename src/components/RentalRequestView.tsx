@@ -43,18 +43,25 @@ function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function isDateInAvailablePeriods(date: string, periods?: { start: string; end: string }[]) {
+  if (!periods || periods.length === 0) return true; // 기간 미설정 시 전체 허용
+  return periods.some(p => date >= p.start && date <= p.end);
+}
+
 const Calendar = ({
   startDate,
   endDate,
   setStartDate,
   setEndDate,
-  disabledDates
+  disabledDates,
+  availablePeriods
 }: {
   startDate: string;
   endDate: string;
   setStartDate: (d: string) => void;
   setEndDate: (d: string) => void;
   disabledDates: Set<string>;
+  availablePeriods?: { start: string; end: string }[];
 }) => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -65,7 +72,7 @@ const Calendar = ({
   // 날짜 클릭 핸들러
   const handleDateClick = (date: Date) => {
     const d = formatDate(date);
-    if (disabledDates.has(d)) return;
+    if (isDateDisabled(d)) return;
     if (!startDate || (startDate && endDate)) {
       setStartDate(d);
       setEndDate('');
@@ -79,10 +86,17 @@ const Calendar = ({
     }
   };
 
+  // 날짜 비활성화 로직
+  function isDateDisabled(date: string) {
+    if (disabledDates.has(date)) return true;
+    if (!isDateInAvailablePeriods(date, availablePeriods)) return true;
+    return false;
+  }
+
   // 달력 셀 스타일
   const getCellStyle = (date: Date) => {
     const d = formatDate(date);
-    if (disabledDates.has(d)) return 'bg-gray-200 text-gray-400 cursor-not-allowed';
+    if (isDateDisabled(d)) return 'bg-gray-200 text-gray-400 cursor-not-allowed';
     if (startDate && endDate && d >= startDate && d <= endDate) return 'bg-cucumber-600 text-white font-bold';
     if (startDate === d) return 'bg-cucumber-500 text-white font-bold';
     if (endDate === d) return 'bg-cucumber-500 text-white font-bold';
@@ -109,7 +123,7 @@ const Calendar = ({
               type="button"
               className={`aspect-square rounded-lg transition-all text-base md:text-lg ${getCellStyle(date)}`}
               style={{ minWidth: 44, minHeight: 44 }}
-              disabled={disabledDates.has(d)}
+              disabled={isDateDisabled(d)}
               onClick={() => handleDateClick(date)}
             >
               {date.getDate()}
@@ -127,6 +141,8 @@ const RentalRequestView = ({ item, onBack, onRequest, reservedTimes = [] }: Rent
   const [error, setError] = useState('');
 
   const disabledDates = getDisabledDates(reservedTimes);
+  // 대여 가능 기간 외 날짜 비활성화
+  const availablePeriods = item.availablePeriods;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,12 +152,13 @@ const RentalRequestView = ({ item, onBack, onRequest, reservedTimes = [] }: Rent
       setError('종료일이 시작일보다 빠를 수 없습니다.');
       return;
     }
-    // 선택한 구간에 예약된 날짜가 포함되는지 확인
+    // 선택한 구간에 예약된 날짜나 대여 불가 날짜가 포함되는지 확인
     let cur = new Date(startDate);
     const end = new Date(endDate);
     while (cur <= end) {
-      if (disabledDates.has(cur.toISOString().slice(0, 10))) {
-        setError('선택한 기간에 이미 예약된 날짜가 포함되어 있습니다.');
+      const d = cur.toISOString().slice(0, 10);
+      if (disabledDates.has(d) || !isDateInAvailablePeriods(d, availablePeriods)) {
+        setError('선택한 기간에 대여가 불가능한 날짜가 포함되어 있습니다.');
         return;
       }
       cur.setDate(cur.getDate() + 1);
@@ -167,19 +184,10 @@ const RentalRequestView = ({ item, onBack, onRequest, reservedTimes = [] }: Rent
           setStartDate={setStartDate}
           setEndDate={setEndDate}
           disabledDates={disabledDates}
+          availablePeriods={item.availablePeriods}
         />
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-4 items-center justify-center">
-            <div>
-              <label className="block mb-1 font-medium">시작일</label>
-              <div className="text-lg font-bold min-w-[100px] text-center border rounded py-2 bg-gray-50">{startDate || '-'}</div>
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">종료일</label>
-              <div className="text-lg font-bold min-w-[100px] text-center border rounded py-2 bg-gray-50">{endDate || '-'}</div>
-            </div>
-          </div>
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
           <button
             type="submit"
             className="w-full bg-cucumber-600 text-white py-3 rounded-lg font-semibold hover:bg-cucumber-700 transition-colors text-xl mt-4"
